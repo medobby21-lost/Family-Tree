@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Tree Login</title>
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: rgba(26, 26, 30, 0.85);
+            --border-color: #2a2a2e;
+            --text-main: #fffffe;
+            --text-secondary: #94a1b2;
+            --accent: #7f5af0;
+            --accent-hover: #9270f2;
+            --error-color: #ff5e5b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(127, 90, 240, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(127, 90, 240, 0.05) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient glowing circles */
+        .glow-circle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--accent);
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glow-1 {
+            top: 10%;
+            left: 10%;
+        }
+
+        .glow-2 {
+            bottom: 10%;
+            right: 10%;
+        }
+
+        .login-container {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: rgba(18, 18, 20, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(127, 90, 240, 0.2);
+            background-color: rgba(18, 18, 20, 0.9);
+        }
+
+        .error-message {
+            background-color: rgba(255, 94, 91, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+            box-shadow: 0 4px 12px rgba(127, 90, 240, 0.4);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 20px;
+        }
+
+        .footer-note a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-circle glow-1"></div>
+    <div class="glow-circle glow-2"></div>
+
+    <div class="login-container">
+        <header>
+            <h1>Family Tree Portal</h1>
+            <p>Access your family history and connections</p>
+        </header>
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="phone">Enter Phone Number</label>
+                <div class="input-wrapper">
+                    <input type="text" id="phone" name="phone" placeholder="e.g. +919876543210" required autofocus autocomplete="off">
+                </div>
+            </div>
+            
+            <button type="submit">Log In</button>
+        </form>
+
+        <div class="footer-note">
+            Are you an administrator? <a href="/admin/">Go to Django Admin</a>
+        </div>
+    </div>
+</body>
+</html>

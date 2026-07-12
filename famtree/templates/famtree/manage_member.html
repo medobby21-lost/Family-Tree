@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #1a1a1e;
+            --border-color: #2a2a2e;
+            --text-main: #fffffe;
+            --text-secondary: #94a1b2;
+            --accent: #7f5af0;
+            --accent-hover: #9270f2;
+            --input-bg: rgba(18, 18, 20, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 750px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            margin-bottom: 35px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .back-button:hover {
+            color: var(--accent);
+        }
+
+        /* Form styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .section-title {
+            grid-column: 1 / -1;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 15px;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Forms styling for rendered inputs */
+        .obsidian-input, select, input[type="text"], input[type="email"], input[type="date"], textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .obsidian-input:focus, select:focus, input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(127, 90, 240, 0.2);
+            background-color: rgba(18, 18, 20, 0.85);
+        }
+
+        /* Custom photo selector styling */
+        .photo-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(18, 18, 20, 0.4);
+            border: 1px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .preview-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .file-input-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .submit-btn {
+            grid-column: 1 / -1;
+            padding: 15px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+            box-shadow: 0 4px 15px rgba(127, 90, 240, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .form-info {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <header>
+            <h1>{{ title }}</h1>
+            {% if is_first %}
+            <span class="back-button" style="cursor: default;">Welcome</span>
+            {% else %}
+            <a href="{% url 'home' %}" class="back-button">✖ Cancel</a>
+            {% endif %}
+        </header>
+
+        {% if not is_first and not is_edit %}
+        <!-- Link Existing Member Option Card -->
+        <div style="background: rgba(18, 18, 20, 0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent); margin-bottom: 10px;">Link Existing Member</div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">
+                If the <strong>{{ relation_type }}</strong> you want to add already exists in the family tree, select them below to link them directly.
+            </p>
+            <form method="POST" style="display: flex; gap: 15px; align-items: flex-end; grid-template-columns: none;">
+                {% csrf_token %}
+                <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <label for="link_member_id" style="font-size: 0.85rem; color: var(--text-secondary);">Select Member</label>
+                    <select name="link_member_id" id="link_member_id" style="padding: 11px;">
+                        <option value="">-- Choose Member --</option>
+                        {% for p in existing_people %}
+                            <option value="{{ p.id }}">{{ p.name }} {{ p.surname }} ({{ p.phone }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" name="link_member" style="padding: 12px 24px; width: auto; margin: 0; background-color: var(--accent); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                    Link As {{ relation_type|capfirst }}
+                </button>
+            </form>
+        </div>
+        
+        <div style="text-align: center; color: var(--text-secondary); margin-bottom: 30px; font-weight: 500; font-size: 0.9rem; position: relative;">
+            <span style="background: var(--card-bg); padding: 0 15px; z-index: 2; position: relative;">OR CREATE NEW PROFILE</span>
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border-color); z-index: 1;"></div>
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="section-title">Personal Information</div>
+
+            <div class="grid-2">
+                <div class="field-group">
+                    <label for="id_name">First Name *</label>
+                    {{ form.name }}
+                </div>
+                <div class="field-group">
+                    <label for="id_surname">Surname *</label>
+                    {{ form.surname }}
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field-group">
+                    <label for="id_gender">Gender *</label>
+                    {{ form.gender }}
+                </div>
+                <div class="field-group">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <label for="id_native_place" style="margin-bottom: 0;">Native Place</label>
+                        <button type="button" style="background: none; border: none; color: var(--accent); font-size: 0.75rem; cursor: pointer; text-decoration: underline;" onclick="copyCityToNative()">Take from Address City</button>
+                    </div>
+                    {{ form.native_place }}
+                </div>
+            </div>
+
+            <!-- Profile Picture Box -->
+            <div class="field-group">
+                <label>Profile Picture</label>
+                <div class="photo-picker-container">
+                    {% if person and person.photo %}
+                        <img id="img_preview" class="preview-avatar" src="{{ person.photo.url }}" alt="Profile PIC">
+                    {% else %}
+                        <div id="img_preview" class="preview-avatar">👤</div>
+                    {% endif %}
+                    <div class="file-input-wrapper">
+                        {{ form.photo }}
+                        <div class="form-info">Upload a JPG/PNG profile photo. Max 5MB.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field-group">
+                    <label for="id_dob">Date of Birth</label>
+                    {{ form.dob }}
+                </div>
+                <div class="field-group">
+                    <label for="id_dod">Date of Death (leave empty if alive)</label>
+                    {{ form.dod }}
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field-group">
+                    <label for="id_phone">Phone Number (Login Credential) *</label>
+                    {{ form.phone }}
+                    <div class="form-info">Must be unique. Family members will use this to sign in.</div>
+                </div>
+                <div class="field-group">
+                    <label for="id_email">Email Address</label>
+                    {{ form.email }}
+                </div>
+            </div>
+
+            <div class="section-title" style="display: flex; align-items: center; justify-content: space-between;">
+                <span>Address Details</span>
+                {% if rel_person and rel_person.address %}
+                <button type="button" style="padding: 6px 12px; font-size: 0.8rem; width: auto; background: rgba(127, 90, 240, 0.15); border: 1px solid var(--accent); color: var(--text-main); border-radius: 6px; cursor: pointer; margin: 0;" onclick="copyRelativeAddress()">
+                    📋 Copy Address from {{ rel_person.name }}
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="field-group">
+                <label for="id_building">Building/House No.</label>
+                {{ form.building }}
+            </div>
+            
+            <div class="field-group">
+                <label for="id_locality">Locality/Street</label>
+                {{ form.locality }}
+            </div>
+
+            <div class="grid-2">
+                <div class="field-group">
+                    <label for="id_city">City</label>
+                    {{ form.city }}
+                </div>
+                <div class="field-group">
+                    <label for="id_state">State</label>
+                    {{ form.state }}
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field-group">
+                    <label for="id_country">Country</label>
+                    {{ form.country }}
+                </div>
+                <div class="field-group">
+                    <label for="id_pincode">Pin Code</label>
+                    {{ form.pincode }}
+                </div>
+            </div>
+
+            <!-- Only show relationship links if modifying existing tree or editing, otherwise let Django admin handle relationships or wire via view helper -->
+            {% if not is_first and not is_edit %}
+            <!-- Hidden helpers or context description -->
+            <div style="background: rgba(127, 90, 240, 0.05); border: 1px solid rgba(127, 90, 240, 0.2); padding: 15px; border-radius: 8px; font-size: 0.9rem;" class="grid-2">
+                <div style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:5px;">
+                    <div style="font-weight: 600; color: var(--accent);">Adding Relationship</div>
+                    <div>This member will be added to the tree as the <strong>{{ relation_type }}</strong> of <strong>{{ rel_person.name }} {{ rel_person.surname }}</strong>.</div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if is_edit %}
+            <div class="section-title">Relationships (Optional)</div>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom:-5px;">Specify family connections:</div>
+            <div class="grid-2">
+                <div class="field-group">
+                    <label for="id_father">Father</label>
+                    {{ form.father }}
+                </div>
+                <div class="field-group">
+                    <label for="id_mother">Mother</label>
+                    {{ form.mother }}
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="id_spouse">Spouse</label>
+                {{ form.spouse }}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="submit-btn">Save Member</button>
+        </form>
+    </div>
+
+    <script>
+        // Image preview logic
+        const photoInput = document.querySelector('input[type="file"]');
+        const previewElement = document.getElementById('img_preview');
+        
+        if (photoInput && previewElement) {
+            photoInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (previewElement.tagName === 'IMG') {
+                            previewElement.src = e.target.result;
+                        } else {
+                            // Convert div to img
+                            const img = document.createElement('img');
+                            img.id = 'img_preview';
+                            img.className = 'preview-avatar';
+                            img.src = e.target.result;
+                            img.alt = 'Profile PIC';
+                            previewElement.parentNode.replaceChild(img, previewElement);
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Copy address logic
+        function copyRelativeAddress() {
+            {% if rel_person and rel_person.address %}
+            document.getElementById('id_building').value = "{{ rel_person.address.building|escapejs }}";
+            document.getElementById('id_locality').value = "{{ rel_person.address.locality|escapejs }}";
+            document.getElementById('id_city').value = "{{ rel_person.address.city|escapejs }}";
+            document.getElementById('id_state').value = "{{ rel_person.address.state|escapejs }}";
+            document.getElementById('id_country').value = "{{ rel_person.address.country|escapejs }}";
+            document.getElementById('id_pincode').value = "{{ rel_person.address.pincode|escapejs }}";
+            {% endif %}
+        }
+
+        function copyCityToNative() {
+            const cityInput = document.getElementById('id_city');
+            const nativePlaceInput = document.getElementById('id_native_place');
+            if (cityInput && nativePlaceInput) {
+                if (!cityInput.value) {
+                    alert('Please enter a City in the Address section first.');
+                    return;
+                }
+                nativePlaceInput.value = cityInput.value;
+            }
+        }
+    </script>
+</body>
+</html>
