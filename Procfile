@@ -1,1 +1,1 @@
-web: gunicorn Fam.wsgi:application
+web: gunicorn --chdir . Fam.wsgi:application
