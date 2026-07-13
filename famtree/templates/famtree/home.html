@@ -490,6 +490,8 @@
         .link {
             stroke-opacity: 0.5;
             fill: none;
+            vector-effect: non-scaling-stroke;
+            shape-rendering: geometricPrecision;
             transition: stroke-width 0.25s, stroke-opacity 0.5s;
         }
 
@@ -609,6 +611,130 @@
             color: var(--text-secondary);
             font-size: 1.1rem;
             gap: 15px;
+        }
+
+        /* Mobile sidebar toggle */
+        .menu-toggle {
+            display: none;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 95;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: rgba(26, 26, 30, 0.85);
+            color: var(--text-main);
+            font-size: 1.3rem;
+            line-height: 1;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Sidebar backdrop for mobile */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        /* Responsive: tablets */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 340px;
+            }
+            .legend-panel {
+                width: 190px !important;
+                padding: 12px !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        /* Responsive: mobile / small devices */
+        @media (max-width: 820px) {
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 86%;
+                max-width: 360px;
+                transform: translateX(-100%);
+                box-shadow: 6px 0 30px rgba(0, 0, 0, 0.6);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-backdrop.show {
+                display: block;
+            }
+
+            .main-container {
+                width: 100%;
+            }
+
+            .top-float-panel {
+                top: 15px;
+                right: 15px;
+                left: 70px;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .floating-input-wrapper {
+                width: auto;
+                flex: 1 1 160px;
+                min-width: 0;
+            }
+
+            .logout-btn-floating {
+                padding: 8px 12px;
+            }
+
+            .legend-panel {
+                width: 160px !important;
+                bottom: 15px !important;
+                right: 15px !important;
+                font-size: 0.7rem !important;
+            }
+        }
+
+        /* Responsive: very small phones */
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                max-width: none;
+            }
+
+            .legend-panel {
+                display: none !important;
+            }
+
+            .top-float-panel {
+                left: 65px;
+            }
+
+            .member-avatar {
+                width: 90px;
+                height: 90px;
+                font-size: 2.4rem;
+            }
+
+            .title-row h1 {
+                font-size: 1.15rem;
+            }
         }
     </style>
 </head>
@@ -732,8 +858,13 @@
         </div>
     </div>
 
+    <div class="sidebar-backdrop" onclick="closeSidebar()"></div>
+
     <!-- Right Side: SVG Network & Controls -->
     <div class="main-container">
+        <!-- Mobile sidebar toggle -->
+        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+
         <!-- Floating Panels -->
         <div class="top-float-panel">
             <div class="floating-input-wrapper">
@@ -747,7 +878,7 @@
         <svg id="graph-view-canvas"></svg>
 
         <!-- Floating Legend/Index Panel (Bottom Right) -->
-        <div style="position: absolute; bottom: 20px; right: 20px; background: rgba(26, 26, 30, 0.85); border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); z-index: 90; width: 220px; font-size: 0.82rem;">
+        <div class="legend-panel" style="position: absolute; bottom: 20px; right: 20px; background: rgba(26, 26, 30, 0.85); border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); z-index: 90; width: 220px; font-size: 0.82rem;">
             <div style="font-weight: 700; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Graph Legend</div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -778,6 +909,10 @@
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <span style="color: var(--text-secondary);">Elders / Youngers</span>
                     <span style="color: var(--text-secondary); font-size: 0.75rem;">Top ➔ Bottom</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Deceased</span>
+                    <div style="width: 16px; height: 16px; border-radius: 50%; border: 2px dashed var(--text-secondary);"></div>
                 </div>
             </div>
         </div>
@@ -1042,6 +1177,20 @@
                     if (d.gender === 'F') return 'var(--female-color)';
                     return 'var(--other-color)';
                 });
+
+            // Dotted ring for deceased (passed away) members
+            node.filter(d => d.dod)
+                .append("circle")
+                .attr("r", 38)
+                .attr("fill", "none")
+                .attr("stroke", "var(--text-secondary)")
+                .attr("stroke-width", 2)
+                .attr("stroke-dasharray", "3,4")
+                .attr("stroke-opacity", 0.85);
+
+            // Dim deceased nodes slightly for visual cue
+            node.filter(d => d.dod)
+                .attr("opacity", 0.75);
                 
             // If no photo, append letter initials in circles
             node.filter(d => !d.photo).each(function(d) {
@@ -1086,17 +1235,19 @@
                         // Straight line for spouses
                         return `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`;
                     } else if (d.type === 'sibling') {
-                        // Draw sibling link as an elbow above the sibling row
+                        // Smooth curve above the sibling row (no sharp elbow)
                         const startX = d.source.x;
                         const startY = d.source.y;
-                        const midY = startY - 70;
-                        return `M${startX},${startY} L${startX},${midY} L${d.target.x},${midY} L${d.target.x},${d.target.y}`;
+                        const endX = d.target.x;
+                        const endY = d.target.y;
+                        const midY = Math.min(startY, endY) - 70;
+                        return `M${startX},${startY} C ${startX},${midY} ${endX},${midY} ${endX},${endY}`;
                     } else {
-                        // Classical tree elbow line from midpoint of parents
+                        // Smooth curved connector from midpoint of parents to child
                         const parent = d.source;
                         let startX = parent.x;
                         let startY = parent.y;
-                        
+
                         // Find if parent has a spouse in the graph
                         const spouseLink = data.links.find(l => l.type === 'spouse' && (l.source.id === parent.id || l.target.id === parent.id));
                         let key = String(parent.id);
@@ -1105,13 +1256,13 @@
                             startX = (parent.x + spouse.x) / 2;
                             key = [parent.id, spouse.id].sort().join('-');
                         }
-                        
+
                         const gen = parent.generation || 0;
                         const idx = (genMarriageKeys[gen] || []).indexOf(key);
                         const offset = 70 + (idx >= 0 ? idx * 35 : 0);
-                        
+
                         const midY = startY + offset;
-                        return `M${startX},${startY} L${startX},${midY} L${d.target.x},${midY} L${d.target.x},${d.target.y}`;
+                        return `M${startX},${startY} C ${startX},${midY} ${d.target.x},${midY} ${d.target.x},${d.target.y}`;
                     }
                 });
 
@@ -1237,6 +1388,10 @@
             
             populateRelativesList(d);
             switchTab('detail-tab');
+            // On small screens, collapse the sidebar so the graph is visible
+            if (window.matchMedia("(max-width: 820px)").matches) {
+                closeSidebar();
+            }
         }
 
         // Direct relatives helper
@@ -1436,14 +1591,46 @@
             d3.selectAll(".link").classed("path-highlight", false).style("opacity", d => d.type === 'spouse' ? 0.6 : d.type === 'sibling' ? 0.8 : 0.25);
         }
 
+        // Mobile sidebar controls
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            const backdrop = document.querySelector('.sidebar-backdrop');
+            if (backdrop) backdrop.classList.toggle('show');
+            // Re-fit the graph once the slide transition finishes
+            if (graphData) {
+                setTimeout(() => {
+                    if (simulation) simulation.stop();
+                    renderGraph(graphData);
+                }, 320);
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.querySelector('.sidebar-backdrop');
+            if (sidebar) sidebar.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('show');
+        }
+
         // Initialize on page load
         window.addEventListener("DOMContentLoaded", () => {
             initGraph();
-            
+
             // Handle clicking outside canvas to reset path highlights
             document.getElementById("graph-view-canvas").addEventListener("click", () => {
                 resetPathHighlight();
                 activePathHighlight = null;
+            });
+
+            // Re-render graph responsively when viewport changes
+            let resizeTimer = null;
+            window.addEventListener("resize", () => {
+                if (!graphData) return;
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (simulation) simulation.stop();
+                    renderGraph(graphData);
+                }, 250);
             });
         });
     </script>
