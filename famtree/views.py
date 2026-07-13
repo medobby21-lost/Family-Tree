@@ -431,17 +431,33 @@ def add_relative(request, relative_to_id):
 def edit_member(request, member_id):
     if not get_viewer(request):
         return redirect('login')
-        
+
     person = get_object_or_404(Person, id=member_id)
-    
+    is_modal = bool(request.GET.get('modal') or request.POST.get('modal'))
+
     if request.method == 'POST':
         form = MemberForm(request.POST, request.FILES, instance=person)
         if form.is_valid():
             form.save()
+            if is_modal:
+                return JsonResponse({'status': 'ok'})
             return redirect('home')
+        if is_modal:
+            return render(request, 'famtree/member_form_fragment.html', {
+                'form': form,
+                'person': person,
+                'is_edit': True,
+            })
     else:
         form = MemberForm(instance=person)
-        
+
+    if is_modal:
+        return render(request, 'famtree/member_form_fragment.html', {
+            'form': form,
+            'person': person,
+            'is_edit': True,
+        })
+
     context = {
         'form': form,
         'title': f"Edit Profile: {person.name} {person.surname}",

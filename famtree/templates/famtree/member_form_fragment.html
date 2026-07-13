@@ -1,0 +1,138 @@
+<form method="POST" enctype="multipart/form-data" action="{% url 'edit_member' person.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="modal" value="1">
+
+    {% if form.errors %}
+    <div class="form-error-banner">
+        Please fix the following:
+        <ul>
+            {% for field in form %}
+                {% for err in field.errors %}
+                <li>{{ field.label }}: {{ err }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for err in form.non_field_errors %}
+            <li>{{ err }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="section-title">Personal Information</div>
+
+    <div class="grid-2">
+        <div class="field-group">
+            <label for="id_name">First Name *</label>
+            {{ form.name }}
+        </div>
+        <div class="field-group">
+            <label for="id_surname">Surname *</label>
+            {{ form.surname }}
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="field-group">
+            <label for="id_gender">Gender *</label>
+            {{ form.gender }}
+        </div>
+        <div class="field-group">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <label for="id_native_place" style="margin-bottom: 0;">Native Place</label>
+                <button type="button" style="background: none; border: none; color: var(--accent); font-size: 0.75rem; cursor: pointer; text-decoration: underline;" onclick="copyCityToNative()">Take from Address City</button>
+            </div>
+            {{ form.native_place }}
+        </div>
+    </div>
+
+    <div class="field-group">
+        <label>Profile Picture</label>
+        <div class="photo-picker-container">
+            {% if person and person.photo %}
+                <img id="img_preview" class="preview-avatar" src="{{ person.photo.url }}" alt="Profile PIC">
+            {% else %}
+                <div id="img_preview" class="preview-avatar">👤</div>
+            {% endif %}
+            <div class="file-input-wrapper">
+                {{ form.photo }}
+                <div class="form-info">Upload a JPG/PNG profile photo. Max 5MB.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="field-group">
+            <label for="id_dob">Date of Birth</label>
+            {{ form.dob }}
+        </div>
+        <div class="field-group">
+            <label for="id_dod">Date of Death (leave empty if alive)</label>
+            {{ form.dod }}
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="field-group">
+            <label for="id_phone">Phone Number (Login Credential) *</label>
+            {{ form.phone }}
+            <div class="form-info">Must be unique. Family members will use this to sign in.</div>
+        </div>
+        <div class="field-group">
+            <label for="id_email">Email Address</label>
+            {{ form.email }}
+        </div>
+    </div>
+
+    <div class="section-title">Address Details</div>
+
+    <div class="field-group">
+        <label for="id_building">Building/House No.</label>
+        {{ form.building }}
+    </div>
+
+    <div class="field-group">
+        <label for="id_locality">Locality/Street</label>
+        {{ form.locality }}
+    </div>
+
+    <div class="grid-2">
+        <div class="field-group">
+            <label for="id_city">City</label>
+            {{ form.city }}
+        </div>
+        <div class="field-group">
+            <label for="id_state">State</label>
+            {{ form.state }}
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="field-group">
+            <label for="id_country">Country</label>
+            {{ form.country }}
+        </div>
+        <div class="field-group">
+            <label for="id_pincode">Pin Code</label>
+            {{ form.pincode }}
+        </div>
+    </div>
+
+    <div class="section-title">Relationships (Optional)</div>
+    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: -5px;">Specify family connections:</div>
+    <div class="grid-2">
+        <div class="field-group">
+            <label for="id_father">Father</label>
+            {{ form.father }}
+        </div>
+        <div class="field-group">
+            <label for="id_mother">Mother</label>
+            {{ form.mother }}
+        </div>
+    </div>
+    <div class="field-group">
+        <label for="id_spouse">Spouse</label>
+        {{ form.spouse }}
+    </div>
+
+    <button type="submit" class="submit-btn">Save Member</button>
+</form>
