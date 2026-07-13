@@ -13,8 +13,6 @@ services:
     releaseCommand: "python manage.py migrate --noinput"
     startCommand: "gunicorn --chdir . Fam.wsgi:application"
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
