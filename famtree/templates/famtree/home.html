@@ -11,6 +11,7 @@
         :root {
             --bg-color: #121214;
             --sidebar-bg: #1a1a1e;
+            --card-bg: #1a1a1e;
             --border-color: #2a2a2e;
             --text-main: #fffffe;
             --text-secondary: #94a1b2;
@@ -47,7 +48,7 @@
             flex-direction: column;
             z-index: 100;
             box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, width 0.3s ease;
         }
 
         .main-container {
@@ -736,6 +737,281 @@
                 font-size: 1.15rem;
             }
         }
+
+        /* Side panel collapse toggle (desktop) */
+        .title-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: rgba(127, 90, 240, 0.12);
+            border: 1px solid rgba(127, 90, 240, 0.3);
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(127, 90, 240, 0.25);
+        }
+
+        @media (max-width: 820px) {
+            .sidebar-toggle { display: none; }
+        }
+
+        /* Collapsed side panel */
+        body.sidebar-collapsed .sidebar {
+            width: 0;
+            min-width: 0;
+            border-right: none;
+            padding-left: 0;
+            padding-right: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-expand {
+            display: none;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 96;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: rgba(26, 26, 30, 0.85);
+            color: var(--text-main);
+            font-size: 1.3rem;
+            line-height: 1;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.sidebar-collapsed .sidebar-expand {
+            display: flex;
+        }
+
+        @media (max-width: 820px) {
+            .sidebar-expand { display: none !important; }
+            body.sidebar-collapsed .sidebar { width: 86% !important; max-width: 360px !important; }
+        }
+
+        /* Edit modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 760px;
+            max-height: 90vh;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: modalPop 0.25s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .modal-body {
+            padding: 22px;
+            overflow-y: auto;
+        }
+
+        /* Form styling inside modal (mirrors manage_member form) */
+        .modal-body form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .modal-body .section-title {
+            grid-column: 1 / -1;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+            margin-top: 6px;
+        }
+
+        .modal-body .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .modal-body .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .modal-body .field-group label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-body input,
+        .modal-body select,
+        .modal-body textarea {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(18, 18, 20, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .modal-body input:focus,
+        .modal-body select:focus,
+        .modal-body textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(127, 90, 240, 0.2);
+        }
+
+        .modal-body .photo-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(18, 18, 20, 0.4);
+            border: 1px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .modal-body .preview-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-body .file-input-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .modal-body .submit-btn {
+            grid-column: 1 / -1;
+            padding: 14px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .modal-body .submit-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .modal-body .form-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-body .form-error-banner {
+            grid-column: 1 / -1;
+            background: rgba(239, 69, 101, 0.12);
+            border: 1px solid rgba(239, 69, 101, 0.4);
+            color: #ff8aa3;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .modal-body .form-error-banner ul {
+            margin: 6px 0 0 18px;
+        }
+
+        @media (max-width: 600px) {
+            .modal-body .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -745,8 +1021,11 @@
         <div class="sidebar-header">
             <div class="title-row">
                 <h1>Family Tree</h1>
-                <div class="user-tag" title="Viewer">
-                    👤 {% if viewer %}{{ viewer.name }}{% else %}Admin{% endif %}
+                <div class="title-actions">
+                    <div class="user-tag" title="Viewer">
+                        👤 {% if viewer %}{{ viewer.name }}{% else %}Admin{% endif %}
+                    </div>
+                    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse panel" aria-label="Collapse panel">‹</button>
                 </div>
             </div>
             <div class="tab-buttons">
@@ -862,8 +1141,9 @@
 
     <!-- Right Side: SVG Network & Controls -->
     <div class="main-container">
-        <!-- Mobile sidebar toggle -->
+        <!-- Sidebar controls -->
         <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+        <button class="sidebar-expand" onclick="toggleSidebar()" aria-label="Expand panel" title="Expand panel">›</button>
 
         <!-- Floating Panels -->
         <div class="top-float-panel">
@@ -933,6 +1213,17 @@
 
         <!-- Dynamic relative tooltip -->
         <div class="tooltip" id="node-tooltip">Tooltip</div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div class="modal-overlay" id="edit-modal-overlay">
+        <div class="modal" role="dialog" aria-modal="true" aria-label="Edit member">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <button class="modal-close" onclick="closeEditModal()" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body" id="edit-modal-body"></div>
+        </div>
     </div>
 
     <!-- D3 Interactive Graph JS Scripts -->
@@ -1235,15 +1526,19 @@
                         // Straight line for spouses
                         return `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`;
                     } else if (d.type === 'sibling') {
-                        // Smooth curve above the sibling row (no sharp elbow)
+                        // Elbow connector above the sibling row (only bends when needed)
                         const startX = d.source.x;
                         const startY = d.source.y;
                         const endX = d.target.x;
                         const endY = d.target.y;
+                        if (startX === endX) {
+                            return `M${startX},${startY} L${endX},${endY}`;
+                        }
                         const midY = Math.min(startY, endY) - 70;
-                        return `M${startX},${startY} C ${startX},${midY} ${endX},${midY} ${endX},${endY}`;
+                        return `M${startX},${startY} L${startX},${midY} L${endX},${midY} L${endX},${endY}`;
                     } else {
-                        // Smooth curved connector from midpoint of parents to child
+                        // Classic tree elbow line from midpoint of parents to child.
+                        // Skip the horizontal segment when parent and child are already aligned.
                         const parent = d.source;
                         let startX = parent.x;
                         let startY = parent.y;
@@ -1262,7 +1557,13 @@
                         const offset = 70 + (idx >= 0 ? idx * 35 : 0);
 
                         const midY = startY + offset;
-                        return `M${startX},${startY} C ${startX},${midY} ${d.target.x},${midY} ${d.target.x},${d.target.y}`;
+                        const childX = d.target.x;
+
+                        if (startX === childX) {
+                            // Aligned: draw a clean straight vertical line
+                            return `M${startX},${startY} L${childX},${d.target.y}`;
+                        }
+                        return `M${startX},${startY} L${startX},${midY} L${childX},${midY} L${childX},${d.target.y}`;
                     }
                 });
 
@@ -1383,8 +1684,10 @@
             document.getElementById("view-native").textContent = d.native_place || "Not specified";
             document.getElementById("view-address").textContent = d.address || "Not specified";
             
-            // URL edits and additions
-            document.getElementById("edit-member-btn").href = `/edit-member/${d.id}/`;
+            // Wire the Edit Profile button to open the modal popup
+            const editBtn = document.getElementById("edit-member-btn");
+            editBtn.href = `/edit-member/${d.id}/`;
+            editBtn.onclick = (e) => { e.preventDefault(); openEditModal(d.id); };
             
             populateRelativesList(d);
             switchTab('detail-tab');
@@ -1591,12 +1894,12 @@
             d3.selectAll(".link").classed("path-highlight", false).style("opacity", d => d.type === 'spouse' ? 0.6 : d.type === 'sibling' ? 0.8 : 0.25);
         }
 
-        // Mobile sidebar controls
-        function toggleSidebar() {
-            document.querySelector('.sidebar').classList.toggle('open');
-            const backdrop = document.querySelector('.sidebar-backdrop');
-            if (backdrop) backdrop.classList.toggle('show');
-            // Re-fit the graph once the slide transition finishes
+        // Sidebar controls: collapse on desktop, slide overlay on mobile
+        function isMobileView() {
+            return window.matchMedia("(max-width: 820px)").matches;
+        }
+
+        function refitGraph() {
             if (graphData) {
                 setTimeout(() => {
                     if (simulation) simulation.stop();
@@ -1605,11 +1908,112 @@
             }
         }
 
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            if (isMobileView()) {
+                sidebar.classList.toggle('open');
+                const backdrop = document.querySelector('.sidebar-backdrop');
+                if (backdrop) backdrop.classList.toggle('show');
+            } else {
+                document.body.classList.toggle('sidebar-collapsed');
+            }
+            refitGraph();
+        }
+
         function closeSidebar() {
             const sidebar = document.querySelector('.sidebar');
             const backdrop = document.querySelector('.sidebar-backdrop');
-            if (sidebar) sidebar.classList.remove('open');
-            if (backdrop) backdrop.classList.remove('show');
+            if (isMobileView()) {
+                if (sidebar) sidebar.classList.remove('open');
+                if (backdrop) backdrop.classList.remove('show');
+            } else {
+                document.body.classList.remove('sidebar-collapsed');
+            }
+        }
+
+        // Edit Member modal
+        function openEditModal(id) {
+            const overlay = document.getElementById('edit-modal-overlay');
+            const body = document.getElementById('edit-modal-body');
+            body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-secondary);">Loading…</div>';
+            overlay.classList.add('show');
+            fetch(`/edit-member/${id}/?modal=1`)
+                .then(r => r.text())
+                .then(html => { body.innerHTML = html; })
+                .catch(() => {
+                    body.innerHTML = '<div style="color:#ff8aa3; padding:20px;">Failed to load the form.</div>';
+                });
+        }
+
+        function closeEditModal() {
+            const overlay = document.getElementById('edit-modal-overlay');
+            overlay.classList.remove('show');
+            document.getElementById('edit-modal-body').innerHTML = '';
+        }
+
+        // Submit the modal form via AJAX; reload graph on success
+        function handleEditSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fd = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: fd,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).then(resp => {
+                const ct = resp.headers.get('content-type') || '';
+                if (ct.includes('application/json')) {
+                    closeEditModal();
+                    const savedId = selectedNode ? selectedNode.id : null;
+                    initGraph().then(() => {
+                        if (savedId && graphData) {
+                            const n = graphData.nodes.find(x => x.id === savedId);
+                            if (n) selectNode(n);
+                        }
+                    });
+                    return;
+                }
+                // Re-render with validation errors
+                resp.text().then(html => {
+                    document.getElementById('edit-modal-body').innerHTML = html;
+                });
+            }).catch(() => {
+                document.getElementById('edit-modal-body').innerHTML = '<div style="color:#ff8aa3; padding:20px;">Something went wrong.</div>';
+            });
+        }
+
+        // Live photo preview in the modal (event-delegated)
+        function handleEditPhotoChange(e) {
+            if (!e.target.matches('input[type="file"]')) return;
+            const file = e.target.files[0];
+            const preview = document.getElementById('img_preview');
+            if (!file || !preview) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                if (preview.tagName === 'IMG') {
+                    preview.src = ev.target.result;
+                } else {
+                    const img = document.createElement('img');
+                    img.id = 'img_preview';
+                    img.className = 'preview-avatar';
+                    img.src = ev.target.result;
+                    img.alt = 'Profile PIC';
+                    preview.parentNode.replaceChild(img, preview);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function copyCityToNative() {
+            const cityInput = document.getElementById('id_city');
+            const nativePlaceInput = document.getElementById('id_native_place');
+            if (cityInput && nativePlaceInput) {
+                if (!cityInput.value) {
+                    alert('Please enter a City in the Address section first.');
+                    return;
+                }
+                nativePlaceInput.value = cityInput.value;
+            }
         }
 
         // Initialize on page load
@@ -1631,6 +2035,21 @@
                     if (simulation) simulation.stop();
                     renderGraph(graphData);
                 }, 250);
+            });
+
+            // Edit modal: delegated submit + photo preview
+            const editBody = document.getElementById("edit-modal-body");
+            editBody.addEventListener("submit", handleEditSubmit);
+            editBody.addEventListener("change", handleEditPhotoChange);
+
+            const overlay = document.getElementById("edit-modal-overlay");
+            overlay.addEventListener("click", (e) => {
+                if (e.target === overlay) closeEditModal();
+            });
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && overlay.classList.contains("show")) {
+                    closeEditModal();
+                }
             });
         });
     </script>
